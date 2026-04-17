@@ -1,7 +1,6 @@
 Payroll App – User Guide
 ====================================
-Version: 1.0.0
-Build Date: 2026-04-14
+Version: 1.1.0
 
 Welcome to the Automating Innovating AI Payroll App — a secure, flexible, and fully automated payroll engine designed to work standalone or seamlessly integrate with all AIAI CRM Apps.
 

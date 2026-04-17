@@ -1,5 +1,5 @@
 # Payroll App — Unified SQL Express & SQL Server Edition
-## Initial GitHub Release — Version 1.0.0
+## Initial GitHub Release — Version 1.1.0
 
 This release introduces the fully unified version of the Payroll App, combining all features and license tiers into a single Windows `.exe` application. The app supports both SQL Express and SQL Server, selected during installation, eliminating the need for separate builds or database versions.
 
