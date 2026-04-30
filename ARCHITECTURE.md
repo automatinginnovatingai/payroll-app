@@ -13,14 +13,14 @@ The application supports both SQL Server Express and Full SQL Server, selected d
 During installation, the user selects one of two supported database modes:
 
 ### 1. SQL Server Express (Local Database – Recommended for 1–5 Users)
-- Installer automatically installs and configures SQL Server Express
-- Ideal for single‑machine setups or small office networks
-- No licensing cost
+- Installer automatically installs and configures SQL Server Express  
+- Ideal for single‑machine setups or small office networks  
+- No licensing cost  
 
 ### 2. Full SQL Server (Standard/Enterprise)
-- User connects to an existing SQL Server instance
-- Supports multi‑user environments and IT‑managed deployments
-- Designed for medium to large companies
+- User connects to an existing SQL Server instance  
+- Supports multi‑user environments and IT‑managed deployments  
+- Designed for medium to large companies  
 
 The installer writes a registry flag (`UseSQLExpress`) that determines which connection setup page the application loads on first launch.
 
@@ -33,7 +33,7 @@ User Launch → License Prompt → Gumroad API Validation → Local Unlock
 - Key is validated through Gumroad’s `/v2/licenses/verify` endpoint  
 - Valid keys unlock the application and store the license state locally  
 - Periodic revalidation may occur (e.g., every 7 days)  
-- License tier determines access to Basic, Pro, or Enterprise features  
+- License tier determines access to **Basic**, **Pro**, or **Enterprise** features  
 
 ---
 
@@ -42,22 +42,32 @@ User Launch → License Prompt → Gumroad API Validation → Local Unlock
 - No cloud sync, Redis, or external session store  
 - Secure login using salted + hashed admin credentials  
 - Fully offline operation after initial license activation  
+- Session context stores:
+  - `company_id`
+  - `user_role`
+  - `plan_tier`
+  - `crm_connection_mode` (Standalone or Integrated)
 
 ---
 
-## Standalone vs Integrated Modes
+# Standalone vs Integrated Modes
 
-### Standalone Mode
+## Standalone Mode
 The Payroll App operates using its own internal database (`Payroll_App_DB`) containing:
+
 - PayrollEmployees  
 - PayrollTimeEntries  
 - PayrollJobPay  
 - PayrollPeriods  
 - PayrollOvertimeRules  
+- PayrollSettings  
+- AuditLogs (Enterprise only)  
 
-This mode requires no CRM apps installed.
+This mode requires **no CRM apps installed**.
 
-### Integrated Mode (Multi‑CRM Support)
+---
+
+## Integrated Mode (Multi‑CRM Support)
 The Payroll App can connect to any AIAI CRM App database, including:
 
 • Gutter App  
@@ -65,21 +75,64 @@ The Payroll App can connect to any AIAI CRM App database, including:
 • Roofing App  
 • Handyman App  
 • Electrician App  
-• Insulation App  
-• Landscaping App  
 • Production Manager App  
 
-Users may switch CRM databases at any time using the built‑in CRM Database Switcher.
+Users may switch CRM databases at any time using the built‑in **CRM Database Switcher**.
 
-The Payroll App automatically:
-- Uses Payroll_App_DB for its internal tables  
-- Uses the selected CRM DB for employees, job pay, and time‑entry data  
-
-No data is ever mixed between CRM systems.
+### Integrated Mode Behavior
+- Payroll App uses **Payroll_App_DB** for internal tables  
+- Reads employees, job pay, and time entries from the selected CRM DB  
+- company_id ensures strict data isolation  
+- No data is ever mixed between CRM systems  
 
 ---
 
-## Data Transfer Between Computers
+# RBAC & Plan Enforcement
+
+## Role‑Based Access Control (RBAC)
+RBAC is centralized in `centralized_rbac.py` and enforced through:
+
+- `require_feature_access(role, permission)`
+- `get_user_role()`
+
+Roles include:
+- Global Admin  
+- Local Admin  
+- Payroll Manager  
+- Payroll Viewer  
+
+Permissions determine:
+- View access  
+- Edit access  
+- Export access  
+- Admin access  
+
+---
+
+## Plan Enforcement (Basic / Pro / Enterprise)
+Plan enforcement is handled through:
+
+- `enforce_plan("basic", "pro", "enterprise")`
+
+### Basic Tier
+- View‑only access  
+- No editing, no exports, no overtime rules  
+
+### Pro Tier
+- Full payroll functionality  
+- Editors enabled  
+- Overtime rules, job pay, piece‑rate, exports  
+
+### Enterprise Tier
+- Everything in Pro  
+- Audit logs  
+- Multi‑division/region filtering  
+- Advanced reporting  
+- Global admin tools  
+
+---
+
+# Data Transfer Between Computers
 The app includes a built‑in SQL migration tool for moving data to a new machine:
 
 - Creates a `.bak` backup file from the old computer  
@@ -89,7 +142,7 @@ The app includes a built‑in SQL migration tool for moving data to a new machin
 
 ---
 
-## SQL Connection Pages
+# SQL Connection Pages
 The application routes users to the correct connection setup page based on installer selection:
 
 - `sql_connection_page.py` – SQL Express  
@@ -103,10 +156,19 @@ Both pages support:
 
 ---
 
-## Payroll Workflow
-Admin Login → Select CRM DB (optional) → Enter Data → Run Payroll → Export
+# Payroll Workflow
 
-The Payroll App supports multiple pay calculation methods:
+### Full Workflow
+Admin Login  
+→ Select CRM DB (optional)  
+→ Configure Overtime Rules  
+→ Add Employees  
+→ Enter Time Entries & Job Pay  
+→ Create Payroll Period  
+→ Run Payroll  
+→ Export Results  
+
+### Supported Pay Types
 - Hourly wage  
 - Piece‑rate  
 - Job‑pay  
@@ -121,9 +183,9 @@ All rules are defined using a guided question system and stored in the Payroll A
 
 ---
 
-## File Storage & Export
-All payroll exports are stored locally under:
+# File Storage & Export
 
+All payroll exports are stored locally under:
 Documents/AIAI_Payroll_App/Payroll_Exports/YYYY-MM/
 
 Exports include:
@@ -132,4 +194,10 @@ Exports include:
 - Piece‑rate and job‑pay earnings  
 - Period‑based reports  
 
-Excel must be installed to open exported files.
+Excel is required to open exported files.
+
+---
+
+# Summary
+The Payroll App is a fully offline, secure, and modular payroll engine designed for both small businesses and enterprise‑level operations. With multi‑CRM integration, strict RBAC, plan‑tier enforcement, and a flexible overtime engine, it provides a complete payroll solution that adapts to any workflow.
+
