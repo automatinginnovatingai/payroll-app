@@ -145,17 +145,19 @@ SYSTEM REQUIREMENTS
 ============================================================
 LICENSE ACTIVATION
 ============================================================
-The Payroll App requires a valid Gumroad license key.
+A valid Stripe subscription is required to use this application.
 
-• Enter your license key on first launch  
-• The app securely validates your license  
-• Access is restricted if the license is invalid or revoked  
+• On first launch, the app checks your subscription status securely through Stripe.
+• If your subscription is active, the app unlocks full access.
+• If your subscription is canceled, expired, or unpaid, access is restricted.
+• Internet is required only during subscription verification and plan changes.
+• All billing and upgrades are handled through Stripe’s secure checkout.
 
 ============================================================
 GETTING STARTED
 ============================================================
 1. Launch PayrollApp.exe  
-2. Complete license activation  
+2. Complete Stripe activation process
 3. Connect to SQL Server  
 4. Choose Standalone Mode or select a CRM Database  
 5. Navigate to the Admin Interface  
@@ -193,9 +195,6 @@ CRM database not appearing:
 
 Payroll calculation errors:
 • Confirm overtime rules and employee types are set correctly  
-
-License rejected:
-• Verify your Gumroad purchase email and license key  
 
 ============================================================
 SUPPORT
